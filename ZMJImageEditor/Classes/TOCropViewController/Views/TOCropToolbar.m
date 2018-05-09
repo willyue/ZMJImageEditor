@@ -128,10 +128,11 @@
     [_rotateCounterclockwiseButton addTarget:self action:@selector(buttonTapped:) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:_rotateCounterclockwiseButton];
     
+    NSString *resetButtonTitle = NSLocalizedStringFromTableInBundle(@"Reset", @"TOCropViewControllerLocalizable", resourceBundle, nil);
     _resetButton = [UIButton buttonWithType:UIButtonTypeSystem];
     _resetButton.contentMode = UIViewContentModeCenter;
     _resetButton.enabled = NO;
-    [_resetButton setTitle:@"还原" forState:UIControlStateNormal];
+    [_resetButton setTitle:resetButtonTitle forState:UIControlStateNormal];
     [_resetButton setTitleColor:[UIColor colorWithHexString:@"289BF0"] forState:UIControlStateNormal];
     [_resetButton setTitleColor:[UIColor lightTextColor] forState:UIControlStateDisabled];
     [_resetButton addTarget:self action:@selector(buttonTapped:) forControlEvents:UIControlEventTouchUpInside];

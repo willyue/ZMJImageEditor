@@ -324,12 +324,26 @@ static const NSInteger kTextMaxLimitNumber = 100;
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
+    // In CocoaPods, strings are stored in a separate bundle from the main one
+    NSBundle *resourceBundle = nil;
+    NSBundle *classBundle = [NSBundle bundleForClass:[self class]];
+    NSURL *resourceBundleURL = [classBundle URLForResource:@"TOCropViewControllerBundle" withExtension:@"bundle"];
+    if (resourceBundleURL) {
+        resourceBundle = [[NSBundle alloc] initWithURL:resourceBundleURL];
+    }
+    else {
+        resourceBundle = classBundle;
+    }
+    
+    NSString *cancelTitle = NSLocalizedStringFromTableInBundle(@"Cancel", @"TOCropViewControllerLocalizable", resourceBundle, nil);
+    NSString *doneTitle = NSLocalizedStringFromTableInBundle(@"Done", @"TOCropViewControllerLocalizable", resourceBundle, nil);
+    
     self = [super initWithFrame:frame];
     if (self) {
         self.items = [NSArray arrayWithObjects:
-                      [[UIBarButtonItem alloc]initWithTitle:@"取消" style:UIBarButtonItemStylePlain target:self action:@selector(cancelPad)],
+                      [[UIBarButtonItem alloc]initWithTitle:cancelTitle style:UIBarButtonItemStylePlain target:self action:@selector(cancelPad)],
                       [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil],
-                      [[UIBarButtonItem alloc]initWithTitle:@"完成" style:UIBarButtonItemStyleDone target:self action:@selector(donePad)],
+                      [[UIBarButtonItem alloc]initWithTitle:doneTitle style:UIBarButtonItemStyleDone target:self action:@selector(donePad)],
                       nil];
     }
     return self;
