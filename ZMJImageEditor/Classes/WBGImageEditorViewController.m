@@ -700,11 +700,11 @@ NSString * const kColorPanNotificaiton = @"kColorPanNotificaiton";
         CGFloat WS = self.imageView.width/ self.drawingView.width;
         CGFloat HS = self.imageView.height/ self.drawingView.height;
     
-    dispatch_async(dispatch_get_main_queue(), ^{
+//    dispatch_async(dispatch_get_main_queue(), ^{
         UIGraphicsBeginImageContextWithOptions(CGSizeMake(self.imageView.image.size.width, self.imageView.image.size.height),
                                                NO,
                                                self.imageView.image.scale);
-    });
+//    });
     
         [self.imageView.image drawAtPoint:CGPointZero];
         CGFloat viewToimgW = self.imageView.width/self.imageView.image.size.width;
