@@ -32,6 +32,7 @@ typedef NS_OPTIONS(NSInteger, WBGImageEditorComponent) {
 
 - (id)initWithImage:(UIImage*)image;
 - (id)initWithImage:(UIImage*)image delegate:(id<WBGImageEditorDelegate>)delegate dataSource:(id<WBGImageEditorDataSource>)dataSource;
+- (id)initWithImage:(UIImage*)image delegate:(id<WBGImageEditorDelegate>)delegate dataSource:(id<WBGImageEditorDataSource>)dataSource andPlaceHolderText:(NSString*)placeholder;
 - (id)initWithDelegate:(id<WBGImageEditorDelegate>)delegate;
 
 - (void)showInViewController:(UIViewController<WBGImageEditorTransitionDelegate> *)controller withImageView:(UIImageView*)imageView;

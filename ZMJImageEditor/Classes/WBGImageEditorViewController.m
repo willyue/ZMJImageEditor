@@ -58,6 +58,8 @@ NSString * const kColorPanNotificaiton = @"kColorPanNotificaiton";
 @property (nonatomic, assign) BOOL barsHiddenStatus;
 @property (nonatomic, strong) WBGMoreKeyboard *keyboard;
 
+@property (nonatomic, assign) NSString *placeholderText;
+
 @end
 
 @implementation WBGImageEditorViewController
@@ -89,6 +91,18 @@ NSString * const kColorPanNotificaiton = @"kColorPanNotificaiton";
 {
     self = [self init];
     if (self){
+        _originImage = image;
+        self.delegate = delegate;
+        self.dataSource = dataSource;
+    }
+    return self;
+}
+
+- (id)initWithImage:(UIImage *)image delegate:(id<WBGImageEditorDelegate>)delegate dataSource:(id<WBGImageEditorDataSource>)dataSource andPlaceHolderText:(NSString *)placeholder;
+{
+    self = [self init];
+    if (self){
+        _placeholderText = placeholder;
         _originImage = image;
         self.delegate = delegate;
         self.dataSource = dataSource;
@@ -184,6 +198,11 @@ NSString * const kColorPanNotificaiton = @"kColorPanNotificaiton";
         self.drawingView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleTopMargin;
         [self.imageView.superview addSubview:self.drawingView];
         self.drawingView.userInteractionEnabled = YES;
+        
+        // Show Placeholdertext if there are any
+        if(_placeholderText && ![_placeholderText isEqualToString:@""]) {
+            [self addPlaceHolderText:_placeholderText];
+        }
     } else {
         //self.drawingView.frame = self.imageView.superview.frame;
     }
@@ -530,6 +549,25 @@ NSString * const kColorPanNotificaiton = @"kColorPanNotificaiton";
     
     [self hiddenColorPan:YES animation:YES];
 }
+
+
+- (void)addPlaceHolderText:(NSString *)text {
+    WBGTextLabel *_label = [[WBGTextLabel alloc] initWithFrame:CGRectMake(0, 0, self.imageView.size.width/2, 100)];
+    _label.numberOfLines = 0;
+    _label.backgroundColor = [UIColor clearColor];
+    _label.textColor = self.colorPan.currentColor;
+    _label.font = [UIFont systemFontOfSize:50.0f];
+    _label.adjustsFontSizeToFitWidth = YES;
+    _label.textAlignment = NSTextAlignmentCenter;
+    _label.text = text;
+    _label.layer.allowsEdgeAntialiasing = true;
+    
+    CGPoint centerPoint = [self.imageView.superview convertPoint:self.imageView.center toView:self.drawingView];
+    _label.center = CGPointMake(centerPoint.x, centerPoint.y/2);
+    
+    [self.drawingView addSubview:_label];
+}
+
 
 - (void)resetCurrentTool {
     self.currentMode = EditorNonMode;
