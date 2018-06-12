@@ -561,6 +561,10 @@ NSString * const kColorPanNotificaiton = @"kColorPanNotificaiton";
     _label.textAlignment = NSTextAlignmentCenter;
     _label.text = text;
     _label.layer.allowsEdgeAntialiasing = true;
+    _label.layer.shadowColor = [UIColor blackColor].CGColor;
+    _label.layer.shadowOffset= CGSizeMake(0, 0);
+    _label.layer.shadowOpacity = .6f;
+    _label.layer.shadowRadius = 2.f;
     
     CGPoint centerPoint = [self.imageView.superview convertPoint:self.imageView.center toView:self.drawingView];
     _label.center = CGPointMake(centerPoint.x, centerPoint.y/2);
