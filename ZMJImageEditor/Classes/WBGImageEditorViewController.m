@@ -126,7 +126,7 @@ NSString * const kColorPanNotificaiton = @"kColorPanNotificaiton";
     
     self.undoButton.hidden = YES;
     
-//    self.colorPan.frame = CGRectMake([UIScreen mainScreen].bounds.size.width - 60, 100, self.colorPan.bounds.size.width, self.colorPan.bounds.size.height);
+    //    self.colorPan.frame = CGRectMake([UIScreen mainScreen].bounds.size.width - 60, 100, self.colorPan.bounds.size.width, self.colorPan.bounds.size.height);
     self.colorPan.frame = CGRectMake(0, [UIScreen mainScreen].bounds.size.height-99, [UIScreen mainScreen].bounds.size.width, 50);
     self.colorPan.dataSource = self.dataSource;
     [self.view addSubview:_colorPan];
@@ -153,7 +153,7 @@ NSString * const kColorPanNotificaiton = @"kColorPanNotificaiton";
     
     //ShowBusyIndicatorForView(self.view);
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(.25 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-      //  HideBusyIndicatorForView(self.view);
+        //  HideBusyIndicatorForView(self.view);
         [self refreshImageView];
     });
     
@@ -311,7 +311,7 @@ NSString * const kColorPanNotificaiton = @"kColorPanNotificaiton";
     self.scrollView.delegate = self;
     self.scrollView.clipsToBounds = NO;
     self.scrollView.backgroundColor = [UIColor blackColor];
-
+    
 }
 
 - (void)refreshImageView {
@@ -410,7 +410,7 @@ NSString * const kColorPanNotificaiton = @"kColorPanNotificaiton";
 #pragma mark - Actions
 ///发送
 - (IBAction)sendAction:(UIButton *)sender {
-
+    
     [self buildClipImageShowHud:YES clipedCallback:^(UIImage *clipedImage) {
         if ([self.delegate respondsToSelector:@selector(imageEditor:didFinishEdittingWithImage:)]) {
             [self.delegate imageEditor:self didFinishEdittingWithImage:clipedImage];
@@ -510,13 +510,13 @@ NSString * const kColorPanNotificaiton = @"kColorPanNotificaiton";
         }];
     }];
     
-//    NSArray<WBGMoreKeyboardItem *> *sources = nil;
-//    if (self.dataSource) {
-//        sources = [self.dataSource imageItemsEditor:self];
-//    }
-//    //贴图模块
-//    [self.keyboard setChatMoreKeyboardData:sources];
-//    [self.keyboard showInView:self.view withAnimation:YES];
+    //    NSArray<WBGMoreKeyboardItem *> *sources = nil;
+    //    if (self.dataSource) {
+    //        sources = [self.dataSource imageItemsEditor:self];
+    //    }
+    //    //贴图模块
+    //    [self.keyboard setChatMoreKeyboardData:sources];
+    //    [self.keyboard showInView:self.view withAnimation:YES];
 }
 
 - (IBAction)backAction:(UIButton *)sender {
@@ -544,7 +544,7 @@ NSString * const kColorPanNotificaiton = @"kColorPanNotificaiton";
         [_currentTool cleanup];
         _currentTool = self.textTool;
         [_currentTool setup];
-
+        
     }
     
     [self hiddenColorPan:YES animation:YES];
@@ -567,7 +567,7 @@ NSString * const kColorPanNotificaiton = @"kColorPanNotificaiton";
     _label.layer.shadowRadius = 2.f;
     
     CGPoint centerPoint = [self.imageView.superview convertPoint:self.imageView.center toView:self.drawingView];
-    _label.center = CGPointMake(centerPoint.x, centerPoint.y/2);
+    _label.center = centerPoint;
     
     [self.drawingView addSubview:_label];
 }
@@ -621,12 +621,12 @@ NSString * const kColorPanNotificaiton = @"kColorPanNotificaiton";
     
     [self refreshImageView];
     [self viewDidLayoutSubviews];
-
-
+    
+    
     self.navigationItem.rightBarButtonItem.enabled = YES;
     __weak typeof(self)weakSelf = self;
     if (cropViewController.croppingStyle != TOCropViewCroppingStyleCircular) {
-
+        
         [cropViewController dismissAnimatedFromParentViewController:self
                                                    withCroppedImage:image
                                                              toView:self.imageView
@@ -704,13 +704,13 @@ NSString * const kColorPanNotificaiton = @"kColorPanNotificaiton";
     
     [UIView animateWithDuration:animation ? .25f : 0.f delay:0 usingSpringWithDamping:1 initialSpringVelocity:1 options:isHide ? UIViewAnimationOptionCurveEaseOut : UIViewAnimationOptionCurveEaseIn animations:^{
         if (isHide) {
-            bottomBarBottom.constant = -49.f;
-            topBarTop.constant = -64.f;
+            self->bottomBarBottom.constant = -49.f;
+            self->topBarTop.constant = -64.f;
         } else {
-            bottomBarBottom.constant = 0;
-            topBarTop.constant = 0;
+            self->bottomBarBottom.constant = 0;
+            self->topBarTop.constant = 0;
         }
-        _barsHiddenStatus = isHide;
+        self->_barsHiddenStatus = isHide;
         [self.view layoutIfNeeded];
     } completion:^(BOOL finished) {
         
@@ -721,7 +721,7 @@ NSString * const kColorPanNotificaiton = @"kColorPanNotificaiton";
     [UIView animateWithDuration:animation ? .25f : 0.f delay:0 usingSpringWithDamping:1 initialSpringVelocity:1 options:yesOrNot ? UIViewAnimationOptionCurveEaseOut : UIViewAnimationOptionCurveEaseIn animations:^{
         self.colorPan.hidden = yesOrNot;
     } completion:^(BOOL finished) {
-    
+        
     }];
 }
 
@@ -735,27 +735,21 @@ NSString * const kColorPanNotificaiton = @"kColorPanNotificaiton";
 }
 
 - (void)buildClipImageShowHud:(BOOL)showHud clipedCallback:(void(^)(UIImage *clipedImage))clipedCallback {
-    if (showHud) {
-        //ShowBusyTextIndicatorForView(self.view, @"生成图片中...", nil);
-    }
-//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    dispatch_async(dispatch_get_main_queue(), ^{
         CGFloat WS = self.imageView.width/ self.drawingView.width;
         CGFloat HS = self.imageView.height/ self.drawingView.height;
-    
-//    dispatch_async(dispatch_get_main_queue(), ^{
+        
         UIGraphicsBeginImageContextWithOptions(CGSizeMake(self.imageView.image.size.width, self.imageView.image.size.height),
                                                NO,
                                                self.imageView.image.scale);
-//    });
-    
+        
         [self.imageView.image drawAtPoint:CGPointZero];
         CGFloat viewToimgW = self.imageView.width/self.imageView.image.size.width;
         CGFloat viewToimgH = self.imageView.height/self.imageView.image.size.height;
         __unused CGFloat drawX = self.imageView.left/viewToimgW;
         CGFloat drawY = self.imageView.top/viewToimgH;
-        [_drawingView.image drawInRect:CGRectMake(0, -drawY, self.imageView.image.size.width/WS, self.imageView.image.size.height/HS)];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        for (UIView *subV in _drawingView.subviews) {
+        [self->_drawingView.image drawInRect:CGRectMake(0, -drawY, self.imageView.image.size.width/WS, self.imageView.image.size.height/HS)];
+        for (UIView *subV in self->_drawingView.subviews) {
             if ([subV isKindOfClass:[WBGTextToolView class]]) {
                 WBGTextToolView *textLabel = (WBGTextToolView *)subV;
                 //进入正常状态
@@ -774,37 +768,44 @@ NSString * const kColorPanNotificaiton = @"kColorPanNotificaiton";
                 CGFloat sh = textImg.size.height / selfRh;
                 
                 [textImg drawInRect:CGRectMake(textLabel.left/selfRw, (textLabel.top/selfRh) - drawY, sw, sh)];
+            }else if([subV isKindOfClass:[WBGTextLabel class]]) {
+                WBGTextLabel *textLabel = (WBGTextLabel *)subV;
+                
+                //生成图片
+                UIImage *textImg = [self.class screenshot:textLabel orientation:UIDeviceOrientationPortrait usePresentationLayer:YES];
+                CGFloat rotation = textLabel.layer.transformRotationZ;
+                textImg = [textImg imageRotatedByRadians:rotation];
+                
+                CGFloat selfRw = self.imageView.bounds.size.width / self.imageView.image.size.width;
+                CGFloat selfRh = self.imageView.bounds.size.height / self.imageView.image.size.height;
+                
+                CGFloat sw = textImg.size.width / selfRw;
+                CGFloat sh = textImg.size.height / selfRh;
+                
+                [textImg drawInRect:CGRectMake(textLabel.left/selfRw, (textLabel.top/selfRh) - drawY, sw, sh)];
             }
         }
-    });
-    
+        
         UIImage *tmp = UIGraphicsGetImageFromCurrentImageContext();
         UIGraphicsEndImageContext();
         
-        dispatch_async(dispatch_get_main_queue(), ^{
-            //HideBusyIndicatorForView(self.view);
-            UIImage *image = [UIImage imageWithCGImage:tmp.CGImage scale:[UIScreen mainScreen].scale orientation:UIImageOrientationUp];
-            clipedCallback(image);
-            
-        });
-//    });
+        UIImage *image = [UIImage imageWithCGImage:tmp.CGImage scale:[UIScreen mainScreen].scale orientation:UIImageOrientationUp];
+        clipedCallback(image);
+        
+    });
 }
 
 + (UIImage *)screenshot:(UIView *)view orientation:(UIDeviceOrientation)orientation usePresentationLayer:(BOOL)usePresentationLayer
 {
     __block CGSize targetSize = CGSizeZero;
-    dispatch_async(dispatch_get_main_queue(), ^{
-        CGSize size = view.bounds.size;
-        targetSize = CGSizeMake(size.width * view.layer.transformScaleX, size.height *  view.layer.transformScaleY);
-    });
+    CGSize size = view.bounds.size;
+    targetSize = CGSizeMake(size.width * view.layer.transformScaleX, size.height *  view.layer.transformScaleY);
     
     UIGraphicsBeginImageContextWithOptions(targetSize, NO, [UIScreen mainScreen].scale);
     
     CGContextRef ctx = UIGraphicsGetCurrentContext();
     CGContextSaveGState(ctx);
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [view drawViewHierarchyInRect:CGRectMake(0, 0, targetSize.width, targetSize.height) afterScreenUpdates:NO];
-    });
+    [view drawViewHierarchyInRect:CGRectMake(0, 0, targetSize.width, targetSize.height) afterScreenUpdates:NO];
     CGContextRestoreGState(ctx);
     
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
