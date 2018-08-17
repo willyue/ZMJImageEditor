@@ -60,6 +60,8 @@ NSString * const kColorPanNotificaiton = @"kColorPanNotificaiton";
 
 @property (nonatomic, assign) NSString *placeholderText;
 
+@property (nonatomic, assign) BOOL loadedPlaceholder;
+
 @end
 
 @implementation WBGImageEditorViewController
@@ -198,15 +200,19 @@ NSString * const kColorPanNotificaiton = @"kColorPanNotificaiton";
         self.drawingView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleTopMargin;
         [self.imageView.superview addSubview:self.drawingView];
         self.drawingView.userInteractionEnabled = YES;
-        
-        // Show Placeholdertext if there are any
-        if(_placeholderText && ![_placeholderText isEqualToString:@""]) {
-            [self addPlaceHolderText:_placeholderText];
-        }
     } else {
-        //self.drawingView.frame = self.imageView.superview.frame;
+        self.drawingView.frame = self.imageView.superview.frame;
     }
     
+    
+    
+    // Show Placeholdertext if there are any
+    if(!_loadedPlaceholder && self.imageView.image) {
+        if(_placeholderText && ![_placeholderText isEqualToString:@""]) {
+            _loadedPlaceholder = YES;
+            [self addPlaceHolderText:_placeholderText];
+        }
+    }
     
     self.topBannerView.frame = CGRectMake(0, 0, self.imageView.width, CGRectGetMinY(self.imageView.frame));
     self.bottomBannerView.frame = CGRectMake(0, CGRectGetMaxY(self.imageView.frame), self.imageView.width, self.drawingView.height - CGRectGetMaxY(self.imageView.frame));
@@ -330,6 +336,8 @@ NSString * const kColorPanNotificaiton = @"kColorPanNotificaiton";
         CGFloat ratio = MIN(_scrollView.frame.size.width / size.width, _scrollView.frame.size.height / size.height);
         CGFloat W = ratio * size.width * _scrollView.zoomScale;
         CGFloat H = ratio * size.height * _scrollView.zoomScale;
+        
+        [UIScreen mainScreen].bounds.size.height;
         
         _imageView.frame = CGRectMake(MAX(0, (_scrollView.width-W)/2), MAX(0, (_scrollView.height-H)/2), W, H);
     }
@@ -566,8 +574,11 @@ NSString * const kColorPanNotificaiton = @"kColorPanNotificaiton";
     _label.layer.shadowOpacity = .6f;
     _label.layer.shadowRadius = 2.f;
     
-    CGPoint centerPoint = [self.imageView.superview convertPoint:self.imageView.center toView:self.drawingView];
-    _label.center = centerPoint;
+    // Reposition to bottom right
+    CGRect frame = _label.frame;
+    frame.origin.x = self.imageView.frame.size.width - _label.frame.size.width - 10; //margin right
+    frame.origin.y = self.imageView.frame.size.height - _label.frame.size.height + self.imageView.frame.origin.y - 10; //margin bottom
+    _label.frame = frame;
     
     [self.drawingView addSubview:_label];
 }
