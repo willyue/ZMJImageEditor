@@ -499,6 +499,7 @@ static WBGTextToolView *activeView = nil;
         [CATransaction setDisableActions:YES];
         _deleteButton.hidden = !active;
         _label.layer.borderWidth = (active) ? 1/_scale : 0;
+        _label.layer.masksToBounds = YES;
         _label.layer.shadowColor = [UIColor grayColor].CGColor;
         _label.layer.shadowOffset= CGSizeMake(0, 0);
         _label.layer.shadowOpacity = .6f;

@@ -9,6 +9,7 @@
 #import "WBGDrawTool.h"
 #import "WBGImageEditorGestureManager.h"
 #import "WBGTextToolView.h"
+#import "WBGActionIndicatorView.h"
 
 @interface WBGDrawTool ()
 @property (nonatomic, strong) UIPanGestureRecognizer *panGesture;
@@ -55,6 +56,8 @@
         for (UIView *subView in self.editor.drawingView.subviews) {
             if ([subView isKindOfClass:[WBGTextToolView class]]) {
                 [WBGTextToolView setInactiveTextView:(WBGTextToolView *)subView];
+            }else if([subView isKindOfClass:[WBGActionIndicatorView class]]) {
+                [WBGActionIndicatorView setInactiveIndicatorView:(WBGActionIndicatorView *)subView];
             }
         }
         

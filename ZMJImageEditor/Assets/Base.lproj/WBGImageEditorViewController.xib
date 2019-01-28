@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -17,14 +17,17 @@
                 <outlet property="clipButton" destination="PFB-Ig-Llj" id="Sdg-B5-Hzf"/>
                 <outlet property="colorPan" destination="f7D-Br-LP6" id="o0n-7C-itA"/>
                 <outlet property="imageView" destination="L0E-Hz-dO7" id="8Uo-zs-uHX"/>
+                <outlet property="indicatorButton" destination="lH8-5N-myq" id="IlR-oQ-amM"/>
                 <outlet property="panButton" destination="vif-ym-mAZ" id="dhq-qL-UOU"/>
                 <outlet property="paperButton" destination="dR4-MJ-4Kq" id="ljA-cj-EGo"/>
                 <outlet property="scrollView" destination="eg2-dz-mJn" id="syX-xc-Eiv"/>
                 <outlet property="sendButton" destination="Li1-F3-HD7" id="ILa-6f-mdo"/>
+                <outlet property="sliderBar" destination="itd-G3-Jw8" id="Xvl-7i-WfT"/>
                 <outlet property="textButton" destination="cnm-kZ-dpx" id="Gv1-I7-f2Y"/>
                 <outlet property="topBar" destination="vKW-ZA-nXo" id="4f1-Hp-06S"/>
                 <outlet property="topBarTop" destination="V7Y-h0-Shc" id="Y3q-lg-gKw"/>
                 <outlet property="undoButton" destination="yeV-aj-vVt" id="CuD-0G-Osx"/>
+                <outlet property="valueSlider" destination="19l-1I-8V2" id="52d-VG-OF3"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -111,6 +114,15 @@
                                         <action selector="paperAction:" destination="-1" eventType="touchUpInside" id="uSp-LB-Pto"/>
                                     </connections>
                                 </button>
+                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lH8-5N-myq">
+                                    <rect key="frame" x="272" y="9" width="32" height="32"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <fontDescription key="fontDescription" type="system" weight="medium" pointSize="16"/>
+                                    <state key="normal" image="clip_indicator"/>
+                                    <connections>
+                                        <action selector="indicatorAction:" destination="-1" eventType="touchUpInside" id="CZV-07-WNy"/>
+                                    </connections>
+                                </button>
                             </subviews>
                             <color key="backgroundColor" red="0.086274509799999996" green="0.098039215690000001" blue="0.1019607843" alpha="0.88" colorSpace="calibratedRGB"/>
                             <constraints>
@@ -156,6 +168,45 @@
                                 <constraint firstAttribute="height" constant="64" id="g2k-gl-jyQ"/>
                             </constraints>
                         </view>
+                        <view hidden="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="itd-G3-Jw8" userLabel="Slider Bar">
+                            <rect key="frame" x="0.0" y="65" width="375" height="46"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <subviews>
+                                <slider opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="19l-1I-8V2">
+                                    <rect key="frame" x="51" y="8" width="244" height="30"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <color key="minimumTrackTintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    <color key="maximumTrackTintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    <connections>
+                                        <action selector="slideValueChanged:" destination="-1" eventType="valueChanged" id="QiV-u5-tTq"/>
+                                    </connections>
+                                </slider>
+                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TT3-kV-mVg">
+                                    <rect key="frame" x="327" y="7" width="30" height="30"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    <state key="normal" image="delete-button"/>
+                                    <connections>
+                                        <action selector="removeAnnotationPressed:" destination="-1" eventType="touchUpInside" id="E0k-aB-6JA"/>
+                                    </connections>
+                                </button>
+                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="30K-15-RUN" userLabel="Separator">
+                                    <rect key="frame" x="309" y="5" width="1" height="35"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </imageView>
+                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="scale" translatesAutoresizingMaskIntoConstraints="NO" id="mVf-Vz-KlF">
+                                    <rect key="frame" x="10" y="8" width="30" height="30"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <userDefinedRuntimeAttributes>
+                                        <userDefinedRuntimeAttribute type="color" keyPath="tintColor">
+                                            <color key="value" red="0.99999600649999998" green="1" blue="1" alpha="0.5" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </userDefinedRuntimeAttribute>
+                                    </userDefinedRuntimeAttributes>
+                                </imageView>
+                            </subviews>
+                            <color key="backgroundColor" red="0.086274509799999996" green="0.098039215690000001" blue="0.1019607843" alpha="0.88" colorSpace="calibratedRGB"/>
+                        </view>
                     </subviews>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     <constraints>
@@ -179,7 +230,7 @@
                 <constraint firstItem="H4n-yc-FcR" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="Wor-oY-6q8"/>
                 <constraint firstItem="H4n-yc-FcR" firstAttribute="bottom" secondItem="i5M-Pr-FkT" secondAttribute="bottom" id="ylf-ys-XpV"/>
             </constraints>
-            <point key="canvasLocation" x="-50" y="-41"/>
+            <point key="canvasLocation" x="-50.5" y="-41.5"/>
         </view>
         <view contentMode="scaleToFill" id="f7D-Br-LP6" customClass="WBGColorPan">
             <rect key="frame" x="0.0" y="0.0" width="375" height="50"/>
@@ -341,15 +392,18 @@
                 <outletCollection property="colorButtons" destination="5Gj-hS-oFY" id="4ZY-2O-LIM"/>
                 <outletCollection property="colorButtons" destination="i0g-bR-qjp" id="bNr-AN-D3l"/>
             </connections>
-            <point key="canvasLocation" x="-513" y="-243"/>
+            <point key="canvasLocation" x="-502" y="-70"/>
         </view>
     </objects>
     <resources>
         <image name="annotate" width="32" height="32"/>
         <image name="annotate_selected" width="32" height="32"/>
         <image name="clip" width="32" height="32"/>
+        <image name="clip_indicator" width="100" height="100"/>
         <image name="clip_rotate" width="32" height="32"/>
+        <image name="delete-button" width="128" height="128"/>
         <image name="paper" width="100" height="100"/>
+        <image name="scale" width="128" height="128"/>
         <image name="text" width="32" height="32"/>
         <image name="text_selected" width="32" height="32"/>
     </resources>

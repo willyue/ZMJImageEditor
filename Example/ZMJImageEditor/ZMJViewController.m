@@ -9,9 +9,11 @@
 #import "ZMJViewController.h"
 #import <ZMJImageEditor/WBGImageEditor.h>
 #import <ZMJImageEditor/WBGMoreKeyboardItem.h>
-@interface ZMJViewController () <WBGImageEditorDelegate, WBGImageEditorDataSource>
+@interface ZMJViewController () <WBGImageEditorDelegate, WBGImageEditorDataSource, WBGActionIndicatorDataSource>  {
+    UIImage *defaultImage;
+    NSArray *objects;
+}
 @property (weak, nonatomic) IBOutlet UIImageView *imageView;
-
 @end
 
 @implementation ZMJViewController
@@ -21,17 +23,22 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     
-    
+    defaultImage = self.imageView.image;
 }
 
 - (IBAction)editButtonAction:(UIBarButtonItem *)sender {
     if (self.imageView.image) {
-        WBGImageEditor *editor = [[WBGImageEditor alloc] initWithImage:_imageView.image delegate:self dataSource:self];
+        WBGImageEditor *editor = [[WBGImageEditor alloc] initWithImage:defaultImage delegate:self dataSource:self andIndicatorDataSource:self];
         [self presentViewController:editor animated:YES completion:nil];
     } else {
         NSLog(@"木有图片");
     }
     
+}
+
+- (IBAction)clearButtonAction:(id)sender {
+    self.imageView.image = defaultImage;
+    objects = [NSArray array];
 }
 
 #pragma mark - WBGImageEditorDelegate
@@ -42,6 +49,15 @@
 
 - (void)imageEditorDidCancel:(WBGImageEditor *)editor {
     
+}
+
+- (void)indicatorsPlaced:(NSArray *)indicators {
+    objects = indicators;
+}
+
+#pragma mark - WBGActionIndicatorDataSource
+- (NSArray *)actionIndicatorItems {
+    return objects;
 }
 
 #pragma mark - WBGImageEditorDataSource
@@ -61,7 +77,8 @@
 }
 
 - (WBGImageEditorComponent)imageEditorCompoment {
-    return WBGImageEditorWholeComponent;
+    return WBGImageEditorIndicatorComponent | WBGImageEditorColorPanComponent;
+//    return WBGImageEditorWholeComponent;
 }
 
 - (UIColor *)imageEditorDefaultColor {

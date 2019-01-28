@@ -1,31 +1,59 @@
 PODS:
+  - DACircularProgress (2.3.1)
   - FBSnapshotTestCase (2.1.4):
     - FBSnapshotTestCase/SwiftSupport (= 2.1.4)
   - FBSnapshotTestCase/Core (2.1.4)
   - FBSnapshotTestCase/SwiftSupport (2.1.4):
     - FBSnapshotTestCase/Core
+  - IDMPhotoBrowser (1.11.3):
+    - DACircularProgress
+    - pop
+    - SDWebImage (= 4.0.0)
   - Masonry (1.0.2)
+  - pop (1.0.10)
+  - QBImagePickerController (3.4.0)
+  - SDWebImage (4.0.0):
+    - SDWebImage/Core (= 4.0.0)
+  - SDWebImage/Core (4.0.0)
   - YYCategories (1.0.4):
     - YYCategories/no-arc (= 1.0.4)
   - YYCategories/no-arc (1.0.4)
-  - ZMJImageEditor (0.2.4):
+  - ZMJImageEditor (0.3.0):
+    - IDMPhotoBrowser
     - Masonry (~> 1.0.1)
+    - QBImagePickerController
     - YYCategories (~> 1.0.4)
 
 DEPENDENCIES:
   - FBSnapshotTestCase
   - ZMJImageEditor (from `../`)
 
+SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - DACircularProgress
+    - FBSnapshotTestCase
+    - IDMPhotoBrowser
+    - Masonry
+    - pop
+    - QBImagePickerController
+    - SDWebImage
+    - YYCategories
+
 EXTERNAL SOURCES:
   ZMJImageEditor:
-    :path: ../
+    :path: "../"
 
 SPEC CHECKSUMS:
+  DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
   FBSnapshotTestCase: 094f9f314decbabe373b87cc339bea235a63e07a
+  IDMPhotoBrowser: b96159fe4adb991a844068eb17dab9c0b7d7e51a
   Masonry: 7c429b56da9d4ee0bbb3ed77a5ea710d6a5df39e
+  pop: 82ca6b068ce9278fd350fd9dd09482a0ce9492e6
+  QBImagePickerController: d54cf93db6decf26baf6ed3472f336ef35cae022
+  SDWebImage: 76a6348bdc74eb5a55dd08a091ef298e56b55e41
   YYCategories: 6bcd4314c6661a561410dce4a793379ebd306abd
-  ZMJImageEditor: 323cda566291ba8bf86918999ad7ef11ecd695de
+  ZMJImageEditor: 8747cf869af7f23cc6007465e398e57b4a628c1a
 
-PODFILE CHECKSUM: 3c1d7a8afef6c42e332459f25ea9f8fb135c636f
+PODFILE CHECKSUM: 3ebfc297abc6e4932590a6ccf9b451b14a3e1fe5
 
-COCOAPODS: 1.4.0
+COCOAPODS: 1.5.0

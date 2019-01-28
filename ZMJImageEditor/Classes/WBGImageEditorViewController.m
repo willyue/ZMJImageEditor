@@ -19,9 +19,13 @@
 #import "WBGMoreKeyboard.h"
 #import "WBGMosicaViewController.h"
 
+#import "WBGActionIndicatorView.h"
+
 @import YYCategories;
 
 NSString * const kColorPanNotificaiton = @"kColorPanNotificaiton";
+NSString * const kValueSliderNotification = @"kValueSliderNotification";
+NSString * const kRemoveAnnotationNotification = @"kRemoveAnnotationNotification";
 #pragma mark - WBGImageEditorViewController
 
 @interface WBGImageEditorViewController () <UINavigationBarDelegate, UIScrollViewDelegate, TOCropViewControllerDelegate, WBGMoreKeyboardDelegate, WBGKeyboardDelegate> {
@@ -32,6 +36,7 @@ NSString * const kColorPanNotificaiton = @"kColorPanNotificaiton";
 @property (nonatomic, strong, nullable) WBGImageToolBase *currentTool;
 @property (weak, nonatomic) IBOutlet UIView *bottomBar;
 @property (weak, nonatomic) IBOutlet UIView *topBar;
+@property (weak, nonatomic) IBOutlet UIView *sliderBar;
 
 @property (strong, nonatomic) IBOutlet UIView *topBannerView;
 @property (strong, nonatomic) IBOutlet UIView *bottomBannerView;
@@ -48,6 +53,7 @@ NSString * const kColorPanNotificaiton = @"kColorPanNotificaiton";
 @property (weak, nonatomic) IBOutlet UIButton *textButton;
 @property (weak, nonatomic) IBOutlet UIButton *clipButton;
 @property (weak, nonatomic) IBOutlet UIButton *paperButton;
+@property (weak, nonatomic) IBOutlet UIButton *indicatorButton;
 
 @property (nonatomic, strong) WBGDrawTool *drawTool;
 @property (nonatomic, strong) WBGTextTool *textTool;
@@ -100,6 +106,17 @@ NSString * const kColorPanNotificaiton = @"kColorPanNotificaiton";
     return self;
 }
 
+- (id)initWithImage:(UIImage *)image delegate:(id<WBGImageEditorDelegate>)delegate dataSource:(id<WBGImageEditorDataSource>)dataSource andIndicatorDataSource:(id<WBGActionIndicatorDataSource>)indicatorDataSource {
+    self = [self init];
+    if (self){
+        _originImage = image;
+        self.delegate = delegate;
+        self.dataSource = dataSource;
+        self.indicatorDataSource = indicatorDataSource;
+    }
+    return self;
+}
+
 - (id)initWithImage:(UIImage *)image delegate:(id<WBGImageEditorDelegate>)delegate dataSource:(id<WBGImageEditorDataSource>)dataSource andPlaceHolderText:(NSString *)placeholder;
 {
     self = [self init];
@@ -141,6 +158,10 @@ NSString * const kColorPanNotificaiton = @"kColorPanNotificaiton";
         if ([self.dataSource respondsToSelector:@selector(imageEditorCompoment)] && [self.dataSource imageEditorCompoment] & WBGImageEditorDrawComponent) {
             [self.panButton sendActionsForControlEvents:UIControlEventTouchUpInside];
         }
+        
+        if(self.indicatorDataSource && [self.indicatorDataSource respondsToSelector:@selector(actionIndicatorItems)]) {
+            [self drawIndicatorItems:[self.indicatorDataSource actionIndicatorItems]];
+        }
     });
     
     self.panButton.hidden = YES;
@@ -171,6 +192,7 @@ NSString * const kColorPanNotificaiton = @"kColorPanNotificaiton";
     if (curComponent & WBGImageEditorTextComponent) { self.textButton.hidden = NO; [valibleCompoment addObject:self.textButton]; }
     if (curComponent & WBGImageEditorClipComponent) { self.clipButton.hidden = NO; [valibleCompoment addObject:self.clipButton]; }
     if (curComponent & WBGImageEditorPaperComponent) { self.paperButton.hidden = NO; [valibleCompoment addObject:self.paperButton]; }
+    if (curComponent & WBGImageEditorIndicatorComponent) { self.indicatorButton.hidden = NO; [valibleCompoment addObject:self.indicatorButton];}
     if (curComponent & WBGImageEditorColorPanComponent) { self.colorPan.hidden = NO; }
     
     [valibleCompoment enumerateObjectsUsingBlock:^(UIButton * _Nonnull button, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -310,6 +332,19 @@ NSString * const kColorPanNotificaiton = @"kColorPanNotificaiton";
     return _textTool;
 }
 
+- (void)viewDidTap:(UITapGestureRecognizer*)sender
+{
+    if (sender.state == UIGestureRecognizerStateEnded) {
+        BOOL isHidden = self.textTool.editor.barsHiddenStatus;
+        [self.textTool.editor hiddenTopAndBottomBar:!isHidden animation:YES];
+        [self.textTool.editor hiddenColorPan:!isHidden animation:YES];
+        
+        if(_currentMode == EditorIndicatorMode) {
+            [self.textTool.editor hiddenValueSlider:!isHidden animation:YES];
+        }
+    }
+}
+
 - (void)initImageScrollView {
     self.scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.scrollView.showsHorizontalScrollIndicator = NO;
@@ -318,6 +353,10 @@ NSString * const kColorPanNotificaiton = @"kColorPanNotificaiton";
     self.scrollView.clipsToBounds = NO;
     self.scrollView.backgroundColor = [UIColor blackColor];
     
+    
+    // Set on tap action
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewDidTap:)];
+    [self.scrollView addGestureRecognizer:tap];
 }
 
 - (void)refreshImageView {
@@ -418,10 +457,17 @@ NSString * const kColorPanNotificaiton = @"kColorPanNotificaiton";
 #pragma mark - Actions
 ///发送
 - (IBAction)sendAction:(UIButton *)sender {
-    
     [self buildClipImageShowHud:YES clipedCallback:^(UIImage *clipedImage) {
         if ([self.delegate respondsToSelector:@selector(imageEditor:didFinishEdittingWithImage:)]) {
             [self.delegate imageEditor:self didFinishEdittingWithImage:clipedImage];
+        }
+        
+        // Return indicators objects if delegate handling
+        if([self.delegate respondsToSelector:@selector(indicatorsPlaced:)]) {
+            NSPredicate* predicate = [NSPredicate predicateWithFormat:@"self isKindOfClass: %@", [WBGActionIndicatorView class]];
+            NSArray* indicatorViews= [self.drawingView.subviews filteredArrayUsingPredicate:predicate];
+            
+            [self.delegate indicatorsPlaced:indicatorViews];
         }
     }];
     
@@ -527,6 +573,38 @@ NSString * const kColorPanNotificaiton = @"kColorPanNotificaiton";
     //    [self.keyboard showInView:self.view withAnimation:YES];
 }
 
+- (IBAction)indicatorAction:(id)sender {
+    //先设置状态，然后在干别的
+    self.currentMode = EditorIndicatorMode;
+    // Set Value Sliders
+    self.valueSlider.minimumValue = 0.3f;
+    self.valueSlider.value = self.valueSlider.maximumValue;
+    
+    // Get text counter
+    NSPredicate* predicate = [NSPredicate predicateWithFormat:@"self isKindOfClass: %@", [WBGActionIndicatorView class]];
+    NSArray* indicatorViews= [self.drawingView.subviews filteredArrayUsingPredicate:predicate];
+    NSString *counter = [NSString stringWithFormat:@"%ld",(long)[indicatorViews count]+1];
+    
+    // Init properties
+    WBGIndicatorViewProperties *property = [[WBGIndicatorViewProperties alloc] init];
+//    property.viewRotation = 2.0f;
+//    property.viewScale = 0.5f;
+    property.viewCenter = [self.imageView.superview convertPoint:self.imageView.center toView:self.drawingView];
+    
+    WBGActionIndicatorView *view = [[WBGActionIndicatorView alloc] initWithTool:self.textTool andProperties:property];
+    view.fillColor = self.colorPan.currentColor;
+    view.borderColor = [UIColor whiteColor];
+    view.font = [UIFont boldSystemFontOfSize:17];
+    view.text = counter;
+    view.userInteractionEnabled = YES;
+//    view.center = [self.imageView.superview convertPoint:self.imageView.center toView:self.drawingView];
+    
+    [self hiddenValueSlider:NO animation:NO];
+    
+    [self.drawingView addSubview:view];
+    [WBGActionIndicatorView setActiveIndicatorView:view];
+}
+
 - (IBAction)backAction:(UIButton *)sender {
     [self dismissViewControllerAnimated:YES completion:nil];
 }
@@ -598,6 +676,28 @@ NSString * const kColorPanNotificaiton = @"kColorPanNotificaiton";
     }
     return _keyboard;
 }
+
+#pragma mark - Action Indicators Related
+- (void)drawIndicatorItems:(NSArray *)indicators {
+    for(WBGActionIndicatorView *indicatorViews in indicators) {
+        indicatorViews.textTool = self.textTool;
+        indicatorViews.center = indicatorViews.property.viewCenter;
+        
+        NSLog(@"%.2f,%.2f",indicatorViews.property.viewCenter.x,indicatorViews.property.viewCenter.y);
+        [self.drawingView addSubview:indicatorViews];
+        
+        [indicatorViews layoutSubviews];
+    }
+}
+
+- (IBAction)slideValueChanged:(id)sender {
+    [[NSNotificationCenter defaultCenter] postNotificationName:kValueSliderNotification object:[NSNumber numberWithFloat:self.valueSlider.value]];
+}
+
+- (IBAction)removeAnnotationPressed:(id)sender {
+    [[NSNotificationCenter defaultCenter] postNotificationName:kRemoveAnnotationNotification object:nil];
+}
+
 
 #pragma mark - WBGMoreKeyboardDelegate
 - (void) moreKeyboard:(id)keyboard didSelectedFunctionItem:(WBGMoreKeyboardItem *)funcItem {
@@ -684,6 +784,13 @@ NSString * const kColorPanNotificaiton = @"kColorPanNotificaiton";
 }
 
 #pragma mark -
+- (void) loadsInActionItems:(NSArray *)actionItems {
+    for (WBGActionIndicatorView *actionIndicator in actionItems) {
+        [self.drawingView addSubview:actionIndicator];
+        [WBGActionIndicatorView setActiveIndicatorView:actionIndicator];
+    }
+}
+
 - (void)swapToolBarWithEditting {
     switch (_currentMode) {
         case EditorDrawMode:
@@ -692,6 +799,10 @@ NSString * const kColorPanNotificaiton = @"kColorPanNotificaiton";
             if (self.drawTool.allLineMutableArray.count > 0) {
                 self.undoButton.hidden  = NO;
             }
+        }
+            break;
+        case EditorIndicatorMode:{
+            self.panButton.selected = YES;
         }
             break;
         case EditorTextMode:
@@ -736,6 +847,14 @@ NSString * const kColorPanNotificaiton = @"kColorPanNotificaiton";
     }];
 }
 
+- (void)hiddenValueSlider:(BOOL)yesOrNot animation:(BOOL)animation {
+    [UIView animateWithDuration:animation ? .25f : 0.f delay:0 usingSpringWithDamping:1 initialSpringVelocity:1 options:yesOrNot ? UIViewAnimationOptionCurveEaseOut : UIViewAnimationOptionCurveEaseIn animations:^{
+        self.sliderBar.hidden = yesOrNot;
+    } completion:^(BOOL finished) {
+        
+    }];
+}
+
 + (UIImage *)createViewImage:(UIView *)shareView {
     UIGraphicsBeginImageContextWithOptions(shareView.bounds.size, NO, [UIScreen mainScreen].scale);
     [shareView.layer renderInContext:UIGraphicsGetCurrentContext()];
@@ -746,6 +865,13 @@ NSString * const kColorPanNotificaiton = @"kColorPanNotificaiton";
 }
 
 - (void)buildClipImageShowHud:(BOOL)showHud clipedCallback:(void(^)(UIImage *clipedImage))clipedCallback {
+    for (UIView *subV in _drawingView.subviews) {
+        if ([subV isKindOfClass:[WBGActionIndicatorView class]]) {
+            WBGActionIndicatorView *indicator = (WBGActionIndicatorView *)subV;
+            [indicator.archerBGView resetColors];
+        }
+    }
+    
     dispatch_async(dispatch_get_main_queue(), ^{
         CGFloat WS = self.imageView.width/ self.drawingView.width;
         CGFloat HS = self.imageView.height/ self.drawingView.height;
@@ -779,6 +905,24 @@ NSString * const kColorPanNotificaiton = @"kColorPanNotificaiton";
                 CGFloat sh = textImg.size.height / selfRh;
                 
                 [textImg drawInRect:CGRectMake(textLabel.left/selfRw, (textLabel.top/selfRh) - drawY, sw, sh)];
+            }else if ([subV isKindOfClass:[WBGActionIndicatorView class]]) {
+                WBGActionIndicatorView *indicator = (WBGActionIndicatorView *)subV;
+                //进入正常状态
+//                [WBGActionIndicatorView setInactiveIndicatorView:indicator];
+                
+                //生成图片
+                __unused UIView *tes = indicator.archerBGView;
+                UIImage *textImg = [self.class screenshot:indicator.archerBGView orientation:UIDeviceOrientationPortrait usePresentationLayer:YES];
+                CGFloat rotation = indicator.archerBGView.layer.transformRotationZ;
+                textImg = [textImg imageRotatedByRadians:rotation];
+                
+                CGFloat selfRw = self.imageView.bounds.size.width / self.imageView.image.size.width;
+                CGFloat selfRh = self.imageView.bounds.size.height / self.imageView.image.size.height;
+                
+                CGFloat sw = textImg.size.width / selfRw;
+                CGFloat sh = textImg.size.height / selfRh;
+                
+                [textImg drawInRect:CGRectMake(indicator.left/selfRw, (indicator.top/selfRh) - drawY, sw, sh)];
             }else if([subV isKindOfClass:[WBGTextLabel class]]) {
                 WBGTextLabel *textLabel = (WBGTextLabel *)subV;
                 

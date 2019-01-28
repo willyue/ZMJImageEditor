@@ -11,6 +11,9 @@
 #endif
 
 #import "ColorfullButton.h"
+#import "XPixelItem.h"
+#import "XRGBTool.h"
+#import "XScratchView.h"
 #import "TOActivityCroppedImageProvider.h"
 #import "TOCroppedImageAttributes.h"
 #import "TOCropViewControllerTransitioning.h"
@@ -23,6 +26,7 @@
 #import "TOCropView.h"
 #import "UIImage+library.h"
 #import "UIColor+TLChat.h"
+#import "WBGActionIndicatorView.h"
 #import "WBGBaseKeyboard.h"
 #import "WBGChatMacros.h"
 #import "WBGDrawTool.h"
@@ -37,6 +41,7 @@
 #import "WBGMoreKeyboardCell.h"
 #import "WBGMoreKeyboardDelegate.h"
 #import "WBGMoreKeyboardItem.h"
+#import "WBGMosicaViewController.h"
 #import "WBGTextTool.h"
 #import "WBGTextToolView.h"
 

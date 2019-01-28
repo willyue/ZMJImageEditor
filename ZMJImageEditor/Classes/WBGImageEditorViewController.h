@@ -14,6 +14,7 @@ typedef NS_ENUM(NSUInteger, EditorMode) {
     EditorTextMode,
     EditorClipMode,
     EditorPaperMode,
+    EditorIndicatorMode,
 };
 
 extern NSString * const kColorPanNotificaiton;
@@ -32,10 +33,14 @@ extern NSString * const kColorPanNotificaiton;
 @property (weak,   nonatomic, readonly) IBOutlet UIScrollView *scrollView;
 @property (strong, nonatomic, readonly) IBOutlet WBGColorPan *colorPan;
 
+@property (weak, nonatomic) IBOutlet UISlider *valueSlider;
+
 @property (nonatomic, assign) EditorMode currentMode;
 
 - (void)resetCurrentTool;
 
 - (void)editTextAgain;
 - (void)hiddenTopAndBottomBar:(BOOL)isHide animation:(BOOL)animation;
+- (void)hiddenColorPan:(BOOL)yesOrNot animation:(BOOL)animation;
+- (void)hiddenValueSlider:(BOOL)yesOrNot animation:(BOOL)animation;
 @end
