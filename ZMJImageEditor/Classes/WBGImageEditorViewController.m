@@ -169,6 +169,7 @@ NSString * const kRemoveAnnotationNotification = @"kRemoveAnnotationNotification
     self.clipButton.hidden = YES;
     self.paperButton.hidden = YES;
     self.colorPan.hidden = YES;
+    self.indicatorButton.hidden = YES;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
