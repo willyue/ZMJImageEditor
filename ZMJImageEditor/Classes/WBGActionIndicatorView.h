@@ -10,6 +10,12 @@
 
 @class WBGActionToolOverlapView;
 @class WBGIndicatorViewProperties;
+@class WBGActionIndicatorView;
+
+@protocol WBGActionIndicatorViewDelegate <NSObject>
+@optional
+- (void) indicatorViewTapped:(WBGActionIndicatorView *)indicatorView;
+@end
 
 @interface WBGActionIndicatorView : UIView
 @property (nonatomic, strong) NSString *text;
@@ -21,6 +27,8 @@
 @property (nonatomic, strong) NSMutableArray *detailImages;
 @property (nonatomic, strong) WBGIndicatorViewProperties *property;
 @property (nonatomic, weak) WBGTextTool *textTool;
+
+@property (nonatomic, weak) id<WBGActionIndicatorViewDelegate> delegate;
 
 // Schematic Logics
 /*

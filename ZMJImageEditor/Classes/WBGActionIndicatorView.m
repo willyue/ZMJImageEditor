@@ -7,7 +7,6 @@
 
 #import "WBGActionIndicatorView.h"
 #import "WBGImageEditorGestureManager.h"
-#import "ImageManagerVC.h"
 #import "UIView+YYAdd.h"
 #import "UIImage+library.h"
 
@@ -380,10 +379,10 @@ static WBGActionIndicatorView *activeView = nil;
 
 - (void)pushedForImageManager {
     NSLog(@"pressed: %@",self.text);
-    ImageManagerVC *imageManager = [[ImageManagerVC alloc] initWithNibName:@"ImageManagerVC" bundle:[NSBundle bundleForClass:[ImageManagerVC class]]];
-    imageManager.images = self.detailImages;
     
-    [self.superview.viewController presentViewController:imageManager animated:YES completion:nil];
+    if(self.delegate) {
+        [self.delegate indicatorViewTapped:self];
+    }
 }
 
 - (void)viewDidTap:(UITapGestureRecognizer*)sender
@@ -547,9 +546,8 @@ static WBGActionIndicatorView *activeView = nil;
         [CATransaction commit];
         
         // Set the value slider value when active object switched
-        CGFloat scale = [(NSNumber *)[_archerBGView valueForKeyPath:@"layer.transform.scale.x"] floatValue];
-        self.textTool.editor.valueSlider.minimumValue = 0.3f;
-        self.textTool.editor.valueSlider.value = scale;
+        CGFloat rotation = [(NSNumber *)[_archerBGView.contentView.rotateView valueForKeyPath:@"layer.transform.rotation.z"] floatValue];
+        self.textTool.editor.valueSlider.value = rotation;
         
         if (active) {
             [self.archerBGView.contentView.frameView setBackgroundColor:[self.archerBGView.contentView.textColor colorWithAlphaComponent:SELECTED_ALPHA]];
@@ -573,15 +571,18 @@ static WBGActionIndicatorView *activeView = nil;
 }
 
 - (void)valueSlider:(NSNotification *)notification {
-    CGFloat scale = [(NSNumber *)[_archerBGView valueForKeyPath:@"layer.transform.scale.x"] floatValue];
-    NSLog(@"scale = %f, %f", scale,[notification.object floatValue]);
+    CGFloat rotation = [(NSNumber *)[_archerBGView valueForKeyPath:@"layer.transform.rotation.z"] floatValue];
+    NSLog(@"rotation = %f, %f", rotation,[notification.object floatValue]);
     
     [self.textTool.editor hiddenTopAndBottomBar:YES animation:YES];
     //取消当前
 //    [self.textTool.editor resetCurrentTool];
     
-    _property.viewScale = [notification.object floatValue];
-    _archerBGView.transform = CGAffineTransformScale(defaultTransform, _property.viewScale, _property.viewScale);
+    _property.viewRotation = [notification.object floatValue];
+//         activeView.archerBGView.contentView.rotateView.transform = CGAffineTransformRotate(activeView.archerBGView.contentView.rotateView.transform, recognizer.rotation);
+    
+    _archerBGView.contentView.rotateView.transform = CGAffineTransformRotate(defaultTransform, _property.viewRotation);
+//    _archerBGView.transform = CGAffineTransformScale(defaultTransform, _property.viewScale, _property.viewScale);
     
     [self layoutSubviews];
 }

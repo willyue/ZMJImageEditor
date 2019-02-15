@@ -8,8 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
-@protocol WBGImageEditorDelegate, WBGImageEditorTransitionDelegate, WBGImageEditorDataSource, WBGActionIndicatorDataSource;
+@protocol WBGImageEditorDelegate, WBGImageEditorTransitionDelegate, WBGImageEditorDataSource, WBGActionIndicatorDataSource,WBGActionIndicatorDelegate;
 @class WBGMoreKeyboardItem;
+@class WBGActionIndicatorView;
 
 typedef NS_OPTIONS(NSInteger, WBGImageEditorComponent) {
     WBGImageEditorDrawComponent = 1 << 0,
@@ -31,10 +32,11 @@ typedef NS_OPTIONS(NSInteger, WBGImageEditorComponent) {
 @property (nonatomic, weak) id<WBGImageEditorDelegate> delegate;
 @property (nonatomic, weak) id<WBGImageEditorDataSource> dataSource;
 @property (nonatomic, weak) id<WBGActionIndicatorDataSource> indicatorDataSource;
+@property (nonatomic, weak) id<WBGActionIndicatorDelegate> indicatorDelegate;
 
 - (id)initWithImage:(UIImage*)image;
 - (id)initWithImage:(UIImage*)image delegate:(id<WBGImageEditorDelegate>)delegate dataSource:(id<WBGImageEditorDataSource>)dataSource;
-- (id)initWithImage:(UIImage*)image delegate:(id<WBGImageEditorDelegate>)delegate dataSource:(id<WBGImageEditorDataSource>)dataSource andIndicatorDataSource:(id<WBGActionIndicatorDataSource>)indicatorDataSource;
+- (id)initWithImage:(UIImage*)image delegate:(id<WBGImageEditorDelegate>)delegate dataSource:(id<WBGImageEditorDataSource>)dataSource andIndicatorDataSource:(id<WBGActionIndicatorDataSource>)indicatorDataSource andIndicatorDelegate:(id<WBGActionIndicatorDelegate>)indicatorDelegate;
 - (id)initWithImage:(UIImage*)image delegate:(id<WBGImageEditorDelegate>)delegate dataSource:(id<WBGImageEditorDataSource>)dataSource andPlaceHolderText:(NSString*)placeholder;
 - (id)initWithDelegate:(id<WBGImageEditorDelegate>)delegate;
 
@@ -75,4 +77,10 @@ typedef NS_OPTIONS(NSInteger, WBGImageEditorComponent) {
 
 @required
 - (NSArray *)actionIndicatorItems;
+@end
+
+@protocol WBGActionIndicatorDelegate <NSObject>
+
+@required
+- (void)indicatorTapped:(WBGActionIndicatorView *) indicatorView;
 @end

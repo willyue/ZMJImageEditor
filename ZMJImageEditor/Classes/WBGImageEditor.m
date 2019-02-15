@@ -30,9 +30,9 @@
     return [[WBGImageEditorViewController alloc] initWithImage:image delegate:delegate dataSource:dataSource];
 }
 
-- (id)initWithImage:(UIImage*)image delegate:(id<WBGImageEditorDelegate>)delegate dataSource:(id<WBGImageEditorDataSource>)dataSource andIndicatorDataSource:(id<WBGActionIndicatorDataSource>)indicatorDataSource;
+- (id)initWithImage:(UIImage*)image delegate:(id<WBGImageEditorDelegate>)delegate dataSource:(id<WBGImageEditorDataSource>)dataSource andIndicatorDataSource:(id<WBGActionIndicatorDataSource>)indicatorDataSource andIndicatorDelegate:(id<WBGActionIndicatorDelegate>)indicatorDelegate
 {
-    return [[WBGImageEditorViewController alloc] initWithImage:image delegate:delegate dataSource:dataSource andIndicatorDataSource:indicatorDataSource];
+    return [[WBGImageEditorViewController alloc] initWithImage:image delegate:delegate dataSource:dataSource andIndicatorDataSource:indicatorDataSource andIndicatorDelegate:indicatorDelegate];
 }
 
 - (id)initWithImage:(UIImage*)image delegate:(id<WBGImageEditorDelegate>)delegate dataSource:(id<WBGImageEditorDataSource>)dataSource andPlaceHolderText:(NSString *)placeholder;

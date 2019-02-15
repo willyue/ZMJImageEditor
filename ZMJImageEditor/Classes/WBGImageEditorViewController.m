@@ -21,14 +21,14 @@
 
 #import "WBGActionIndicatorView.h"
 
-@import YYCategories;
+#import "YYCategories.h"
 
 NSString * const kColorPanNotificaiton = @"kColorPanNotificaiton";
 NSString * const kValueSliderNotification = @"kValueSliderNotification";
 NSString * const kRemoveAnnotationNotification = @"kRemoveAnnotationNotification";
 #pragma mark - WBGImageEditorViewController
 
-@interface WBGImageEditorViewController () <UINavigationBarDelegate, UIScrollViewDelegate, TOCropViewControllerDelegate, WBGMoreKeyboardDelegate, WBGKeyboardDelegate> {
+@interface WBGImageEditorViewController () <UINavigationBarDelegate, UIScrollViewDelegate, TOCropViewControllerDelegate, WBGMoreKeyboardDelegate, WBGKeyboardDelegate, WBGActionIndicatorViewDelegate> {
     
     __weak IBOutlet NSLayoutConstraint *topBarTop;
     __weak IBOutlet NSLayoutConstraint *bottomBarBottom;
@@ -106,13 +106,14 @@ NSString * const kRemoveAnnotationNotification = @"kRemoveAnnotationNotification
     return self;
 }
 
-- (id)initWithImage:(UIImage *)image delegate:(id<WBGImageEditorDelegate>)delegate dataSource:(id<WBGImageEditorDataSource>)dataSource andIndicatorDataSource:(id<WBGActionIndicatorDataSource>)indicatorDataSource {
+- (id)initWithImage:(UIImage *)image delegate:(id<WBGImageEditorDelegate>)delegate dataSource:(id<WBGImageEditorDataSource>)dataSource andIndicatorDataSource:(id<WBGActionIndicatorDataSource>)indicatorDataSource andIndicatorDelegate:(id<WBGActionIndicatorDelegate>)indicatorDelegate {
     self = [self init];
     if (self){
         _originImage = image;
         self.delegate = delegate;
         self.dataSource = dataSource;
         self.indicatorDataSource = indicatorDataSource;
+        self.indicatorDelegate = indicatorDelegate;
     }
     return self;
 }
@@ -193,7 +194,12 @@ NSString * const kRemoveAnnotationNotification = @"kRemoveAnnotationNotification
     if (curComponent & WBGImageEditorTextComponent) { self.textButton.hidden = NO; [valibleCompoment addObject:self.textButton]; }
     if (curComponent & WBGImageEditorClipComponent) { self.clipButton.hidden = NO; [valibleCompoment addObject:self.clipButton]; }
     if (curComponent & WBGImageEditorPaperComponent) { self.paperButton.hidden = NO; [valibleCompoment addObject:self.paperButton]; }
-    if (curComponent & WBGImageEditorIndicatorComponent) { self.indicatorButton.hidden = NO; [valibleCompoment addObject:self.indicatorButton];}
+    if (curComponent & WBGImageEditorIndicatorComponent) { self.indicatorButton.hidden = NO; [valibleCompoment addObject:self.indicatorButton];
+        
+        // Set Value Sliders 360 *M_PI / 360.0
+        self.valueSlider.minimumValue = -3.14f;
+        self.valueSlider.maximumValue = 3.14f;
+    }
     if (curComponent & WBGImageEditorColorPanComponent) { self.colorPan.hidden = NO; }
     
     [valibleCompoment enumerateObjectsUsingBlock:^(UIButton * _Nonnull button, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -577,9 +583,7 @@ NSString * const kRemoveAnnotationNotification = @"kRemoveAnnotationNotification
 - (IBAction)indicatorAction:(id)sender {
     //先设置状态，然后在干别的
     self.currentMode = EditorIndicatorMode;
-    // Set Value Sliders
-    self.valueSlider.minimumValue = 0.3f;
-    self.valueSlider.value = self.valueSlider.maximumValue;
+    self.valueSlider.value = 0.0f;
     
     // Get text counter
     NSPredicate* predicate = [NSPredicate predicateWithFormat:@"self isKindOfClass: %@", [WBGActionIndicatorView class]];
@@ -598,6 +602,7 @@ NSString * const kRemoveAnnotationNotification = @"kRemoveAnnotationNotification
     view.font = [UIFont boldSystemFontOfSize:17];
     view.text = counter;
     view.userInteractionEnabled = YES;
+    view.delegate = self;
 //    view.center = [self.imageView.superview convertPoint:self.imageView.center toView:self.drawingView];
     
     [self hiddenValueSlider:NO animation:NO];
@@ -683,6 +688,8 @@ NSString * const kRemoveAnnotationNotification = @"kRemoveAnnotationNotification
     for(WBGActionIndicatorView *indicatorViews in indicators) {
         indicatorViews.textTool = self.textTool;
         indicatorViews.center = indicatorViews.property.viewCenter;
+        indicatorViews.userInteractionEnabled = YES;
+        indicatorViews.delegate = self;
         
         NSLog(@"%.2f,%.2f",indicatorViews.property.viewCenter.x,indicatorViews.property.viewCenter.y);
         [self.drawingView addSubview:indicatorViews];
@@ -782,6 +789,13 @@ NSString * const kRemoveAnnotationNotification = @"kRemoveAnnotationNotification
                                                          }];
                                                          
                                                      }];
+}
+
+#pragma mark - WBGActionIndicatorViewDelegate
+- (void)indicatorViewTapped:(WBGActionIndicatorView *)indicatorView {
+    if([self.indicatorDelegate respondsToSelector:@selector(indicatorTapped:)]) {
+        [self.indicatorDelegate indicatorTapped:indicatorView];
+    }
 }
 
 #pragma mark -
