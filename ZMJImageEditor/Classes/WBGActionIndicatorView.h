@@ -66,4 +66,5 @@
 @property (nonatomic, assign) CGFloat viewRotation;
 @property (nonatomic, assign) CGFloat viewScale;
 @property (nonatomic, assign) CGPoint viewCenter;
+@property (nonatomic, strong) NSString *viewIdentifier;
 @end

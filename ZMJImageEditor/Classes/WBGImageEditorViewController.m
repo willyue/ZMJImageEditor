@@ -196,9 +196,9 @@ NSString * const kRemoveAnnotationNotification = @"kRemoveAnnotationNotification
     if (curComponent & WBGImageEditorPaperComponent) { self.paperButton.hidden = NO; [valibleCompoment addObject:self.paperButton]; }
     if (curComponent & WBGImageEditorIndicatorComponent) { self.indicatorButton.hidden = NO; [valibleCompoment addObject:self.indicatorButton];
         
-        // Set Value Sliders 360 *M_PI / 360.0
-        self.valueSlider.minimumValue = -3.14f;
-        self.valueSlider.maximumValue = 3.14f;
+        // Set Value Sliders 360 *M_PI / 180.0
+        self.valueSlider.minimumValue = 0.0f;
+        self.valueSlider.maximumValue = 6.28f;
     }
     if (curComponent & WBGImageEditorColorPanComponent) { self.colorPan.hidden = NO; }
     

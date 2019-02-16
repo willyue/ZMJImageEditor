@@ -598,6 +598,7 @@ static WBGActionIndicatorView *activeView = nil;
 
 - (void)setFillColor:(UIColor *)fillColor
 {
+    _fillColor = fillColor;
     _archerBGView.textColor = fillColor;
     [self.archerBGView.contentView.frameView setBackgroundColor:[self.archerBGView.textColor colorWithAlphaComponent:SELECTED_ALPHA]];
 }
