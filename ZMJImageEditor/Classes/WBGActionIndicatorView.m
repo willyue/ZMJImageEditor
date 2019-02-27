@@ -513,7 +513,8 @@ static WBGActionIndicatorView *activeView = nil;
         // Set defaults rotation & scale
         _archerBGView.contentView.rotateView.transform = CGAffineTransformRotate(_archerBGView.contentView.defaultRotateTransform, _property.viewRotation);
         _archerBGView.transform = CGAffineTransformScale(defaultTransform, _property.viewScale, _property.viewScale);
-        
+      
+        self.textTool.editor.valueSlider.value = _property.viewRotation;
         
         [self initGestures];
     }
@@ -547,6 +548,7 @@ static WBGActionIndicatorView *activeView = nil;
         
         // Set the value slider value when active object switched
         CGFloat rotation = [(NSNumber *)[_archerBGView.contentView.rotateView valueForKeyPath:@"layer.transform.rotation.z"] floatValue];
+        rotation = [self convertNegativeRotations:rotation];
         self.textTool.editor.valueSlider.value = rotation;
         
         if (active) {
@@ -571,8 +573,8 @@ static WBGActionIndicatorView *activeView = nil;
 }
 
 - (void)valueSlider:(NSNotification *)notification {
-    CGFloat rotation = [(NSNumber *)[_archerBGView valueForKeyPath:@"layer.transform.rotation.z"] floatValue];
-    NSLog(@"rotation = %f, %f", rotation,[notification.object floatValue]);
+    CGFloat rotation = [(NSNumber *)[_archerBGView.contentView.rotateView valueForKeyPath:@"layer.transform.rotation.z"] floatValue];
+    NSLog(@"rotation = %f, %f", [self convertNegativeRotations:rotation],[notification.object floatValue]);
     
     [self.textTool.editor hiddenTopAndBottomBar:YES animation:YES];
     //取消当前
@@ -622,4 +624,12 @@ static WBGActionIndicatorView *activeView = nil;
     }
 }
 
+- (CGFloat)convertNegativeRotations:(CGFloat)rotation {
+    if((floorf(rotation * 100) / 100)  < 0) {
+        //0 <-> 6.28
+        rotation = (M_PI * 2) + rotation;
+    }
+    
+    return rotation;
+}
 @end
